@@ -65,7 +65,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.kwizera.javaamalitechlab06textprocessor/com.kwizera.javaamalitechlab06textprocessor.HelloApplication
+                                com.kwizera.javaamalitechlab06textprocessor/com.kwizera.javaamalitechlab06textprocessor.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
