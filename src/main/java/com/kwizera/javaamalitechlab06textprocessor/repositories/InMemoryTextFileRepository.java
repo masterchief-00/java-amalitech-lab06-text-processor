@@ -25,8 +25,16 @@ public class InMemoryTextFileRepository implements TextFileRepository {
     }
 
     @Override
-    public void save(TextFile file) {
-        store.put(file.getName(), file);
+    public void save(Path path) throws IOException {
+        if (Files.isRegularFile(path)) {
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            TextFile textFile = new TextFile(
+                    path.getFileName().toString(),
+                    Files.size(path),
+                    attributes.lastModifiedTime().toMillis(),
+                    false, path);
+            store.put(textFile.getName(), textFile);
+        }
     }
 
     @Override
