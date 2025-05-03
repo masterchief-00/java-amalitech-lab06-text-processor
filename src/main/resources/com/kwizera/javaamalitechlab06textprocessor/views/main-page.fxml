@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
@@ -13,52 +14,66 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-
-<AnchorPane prefHeight="442.0" prefWidth="600.0" style="-fx-background-color: #fff;"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="442.0" prefWidth="600.0"
+            style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/23.0.1"
             fx:controller="com.kwizera.javaamalitechlab06textprocessor.controllers.MainPageController">
     <SplitPane dividerPositions="0.13474025974025974" orientation="VERTICAL" prefHeight="442.0" prefWidth="600.0"
                style="-fx-background-color: #fff;">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="49.0" prefWidth="597.0"
                     style="-fx-background-color: #fff;">
-            <Button fx:id="newFileBtn" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
-                    prefWidth="99.0"
+            <Button fx:id="newFileBtn" layoutX="14.0" layoutY="11.0" mnemonicParsing="false"
+                    onAction="#onNewFileClicked" prefHeight="30.0" prefWidth="99.0"
                     style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-radius: 3; -fx-border-color: #d3d3d3;"
                     text="New file">
                 <font>
                     <Font name="Segoe UI Semibold" size="13.0"/>
                 </font>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Button>
-            <Button fx:id="saveBtn" layoutX="134.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
+            <Button fx:id="saveBtn" layoutX="121.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
                     prefWidth="99.0"
                     style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-radius: 3; -fx-border-color: #d3d3d3;"
                     text="Save">
                 <font>
                     <Font name="Segoe UI Semibold" size="13.0"/>
                 </font>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Button>
-            <Button fx:id="saveAsBtn" layoutX="242.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
+            <Button fx:id="saveAsBtn" layoutX="229.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
                     prefWidth="99.0"
                     style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-radius: 3; -fx-border-color: #d3d3d3;"
                     text="Save As">
                 <font>
                     <Font name="Segoe UI Semibold" size="13.0"/>
                 </font>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Button>
-            <Button fx:id="reloadBtn" layoutX="358.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
+            <Button fx:id="reloadBtn" layoutX="337.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
                     prefWidth="99.0"
                     style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-radius: 3; -fx-border-color: #d3d3d3;"
                     text="Reload">
                 <font>
                     <Font name="Segoe UI Semibold" size="13.0"/>
                 </font>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Button>
-            <Button fx:id="backHomeBtn" layoutX="469.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
-                    prefWidth="113.0" style="-fx-background-color: #007fff; -fx-border-radius: 3;"
-                    text="Back to home" textFill="WHITE">
+            <Button fx:id="backHomeBtn" layoutX="445.0" layoutY="11.0" mnemonicParsing="false" prefHeight="30.0"
+                    prefWidth="137.0" style="-fx-background-color: #007fff; -fx-border-radius: 3;"
+                    text="Change directory" textFill="WHITE">
                 <font>
                     <Font name="Segoe UI Semibold" size="13.0"/>
                 </font>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Button>
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0"
@@ -70,8 +85,8 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
                     <Text fill="#4c4c4c" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                          style="-fx-text-alignment: center;" text="Files in Directory"
-                          textOrigin="CENTER" wrappingWidth="174.0">
+                          style="-fx-text-alignment: center;" text="Files in Directory" textOrigin="CENTER"
+                          wrappingWidth="174.0">
                         <font>
                             <Font name="Segoe UI Semibold" size="16.0"/>
                         </font>
@@ -90,26 +105,43 @@
                                 <Font name="Segoe UI" size="16.0"/>
                             </font>
                         </Text>
-                        <TextField fx:id="regexInput" layoutX="51.0" prefHeight="25.0"
-                                   prefWidth="154.0" promptText="e.g: a-zA-Z 0-9"/>
-                        <Button fx:id="regexSearchBtn" layoutX="213.0" mnemonicParsing="false"
-                                prefHeight="25.0" prefWidth="127.0"
-                                style="-fx-background-color: #007fff;" text="Regex Searrch"
-                                textFill="WHITE">
+                        <TextField fx:id="regexInput" layoutX="51.0" prefHeight="25.0" prefWidth="139.0"
+                                   promptText="e.g: a-zA-Z 0-9"/>
+                        <Button fx:id="regexSearchBtn" layoutX="197.0" layoutY="1.0" mnemonicParsing="false"
+                                prefHeight="25.0" prefWidth="127.0" style="-fx-background-color: #007fff;"
+                                text="Regex Searrch" textFill="WHITE">
                             <font>
                                 <Font name="Segoe UI Semibold" size="12.0"/>
                             </font>
                             <graphic>
-                                <ImageView fitHeight="15.0" fitWidth="17.0" pickOnBounds="true"
-                                           preserveRatio="true">
+                                <ImageView fitHeight="15.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
                                     <Image url="@../images/search.png"/>
                                 </ImageView>
                             </graphic>
+                            <cursor>
+                                <Cursor fx:constant="HAND"/>
+                            </cursor>
                         </Button>
                     </Group>
-                    <TextFlow fx:id="textReader" layoutX="14.0" layoutY="53.0" prefHeight="319.0"
-                              prefWidth="387.0"
-                              style="-fx-background-color: #f5ffff; -fx-border-color: #45b3e0; -fx-border-width: .5;"/>
+                    <TextFlow fx:id="textReader" layoutX="14.0" layoutY="53.0" prefHeight="319.0" prefWidth="387.0"
+                              style="-fx-background-color: #f5ffff; -fx-border-color: #45b3e0; -fx-border-width: .5;">
+                        <padding>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </padding>
+                    </TextFlow>
+                    <Button fx:id="deleteFileBtn" contentDisplay="GRAPHIC_ONLY" layoutX="346.0" layoutY="14.0"
+                            mnemonicParsing="false" prefHeight="21.0" prefWidth="53.0"
+                            style="-fx-background-color: #fff; -fx-border-color: red; -fx-border-radius: 3; -fx-border-width: .5;"
+                            text="Button" onAction="#onDeleteFileClicked">
+                        <graphic>
+                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                <cursor>
+                                    <Cursor fx:constant="HAND"/>
+                                </cursor>
+                                <Image url="@../images/trash.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
                 </AnchorPane>
             </SplitPane>
         </AnchorPane>

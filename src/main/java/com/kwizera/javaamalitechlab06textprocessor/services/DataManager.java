@@ -30,6 +30,17 @@ public class DataManager implements TextProcessor {
     }
 
     @Override
+    public Object readContents(String fileName) throws IOException {
+        Optional<TextFile> file = textFileRepository.findByName(fileName);
+
+        if (file.isPresent()) {
+            return file.get().readSafe();
+        }
+
+        return null;
+    }
+
+    @Override
     public List<LineMatchResult> search(String regex, String fileName) throws IOException {
         Pattern pattern = Pattern.compile(regex); // invalid regex exception. custom one?
         List<LineMatchResult> results = new ArrayList<>();
@@ -135,6 +146,16 @@ public class DataManager implements TextProcessor {
         }
 
         return false;
+    }
+
+    @Override
+    public void syncFiles(Path dir) throws IOException {
+        textFileRepository.syncFromDirectory(dir);
+    }
+
+    @Override
+    public List<TextFile> getFilesInDirectory() {
+        return textFileRepository.findAll();
     }
 
     private List<LineMatchResult> getLineMatchResults(TextFile textFile, Pattern pattern) throws IOException {

@@ -43,6 +43,7 @@ public class InMemoryTextFileRepository implements TextFileRepository {
     }
 
     // refreshes the collection in sync with a directory
+    @Override
     public void syncFromDirectory(Path dir) throws IOException {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.txt")) {
             store.clear();

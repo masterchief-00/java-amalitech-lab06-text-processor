@@ -15,4 +15,6 @@ public interface TextFileRepository {
     void save(Path path) throws IOException;
 
     void delete(String file);
+
+    void syncFromDirectory(Path dir) throws IOException;
 }
