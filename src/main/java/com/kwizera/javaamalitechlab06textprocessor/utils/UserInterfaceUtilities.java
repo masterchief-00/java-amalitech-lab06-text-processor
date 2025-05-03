@@ -24,7 +24,7 @@ public class UserInterfaceUtilities {
         fileNameErrorLabel.setVisible(false);
 
         // buttons
-        ButtonType fileNamingButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OK_DONE);
+        ButtonType fileNamingButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         fileNamingDialog.getDialogPane().getButtonTypes().addAll(fileNamingButtonType, ButtonType.CANCEL);
 
         GridPane fileNamingGrid = new GridPane();

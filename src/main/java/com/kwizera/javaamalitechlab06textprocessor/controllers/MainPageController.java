@@ -82,6 +82,30 @@ public class MainPageController {
     }
 
     @FXML
+    public void onSaveAsClicked() {
+        Optional<String> fileName = UIUtilities.fileNamingDialogBox();
+
+        if (fileName.isPresent()) {
+            try {
+                Path filePath = activeDirectory.resolve(fileName.get() + ".txt");
+                textProcessor.createFile(filePath);
+                String newFileName = filePath.getFileName().toString();
+
+                List<String> lines = List.of(textWriter.getText().split("\\R"));
+                textProcessor.saveToFile(newFileName, lines);
+
+                UIUtilities.displayConfirmation("Changes saved to " + newFileName);
+                syncFileList();
+                defaultSelect(newFileName);
+            } catch (IOException e) {
+                UIUtilities.displayError("ERROR: File could not be created, check if the file with similar isn't already present");
+            }
+        } else {
+            UIUtilities.displayError("ERROR: File not created, invalid file name.");
+        }
+    }
+
+    @FXML
     public void onChangeDirectory() {
         try {
             mainUtilities.switchScene("/com/kwizera/javaamalitechlab06textprocessor/views/landing-page.fxml", backHomeBtn, "TXT Processor");
@@ -94,6 +118,7 @@ public class MainPageController {
     public void onReloadClicked() {
         try {
             syncFileList();
+            defaultSelect();
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: Unable to reload files");
         }
@@ -108,6 +133,7 @@ public class MainPageController {
                 if (textProcessor.deleteFile(fileNameSelected)) {
                     UIUtilities.displayConfirmation("File deleted");
                     syncFileList();
+                    defaultSelect();
                 }
             } catch (IOException e) {
                 UIUtilities.displayError("ERROR: File not deleted");
