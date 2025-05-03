@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="458.0" prefWidth="356.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kwizera.javaamalitechlab06textprocessor.controllers.LandingPageController">
+   <Pane layoutY="42.0" prefHeight="386.0" prefWidth="356.0" style="-fx-background-color: #fff;">
+      <Text layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Directory" textAlignment="CENTER" wrappingWidth="356.0000000000001">
+         <font>
+            <Font name="Segoe UI Semibold" size="26.0" />
+         </font>
+      </Text>
+      <Button fx:id="chooseDirBtn" alignment="CENTER_RIGHT" contentDisplay="CENTER" defaultButton="true" graphicTextGap="5.0" layoutX="42.0" layoutY="99.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="272.0" style="-fx-background-color: #f8f8ff; -fx-border-color: #45b3e0; -fx-border-radius: 8; -fx-border-width: 1;" text="Pick a directory" textFill="#4c4c4c">
+         <font>
+            <Font name="Segoe UI Semibold" size="17.0" />
+         </font>
+         <graphic>
+            <ImageView fitHeight="35.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true" translateX="-100.0">
+               <viewport>
+                  <Rectangle2D />
+               </viewport>
+               <Image url="@../images/folder.png" />
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets right="45.0" />
+         </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Text fill="#4c4c4c" layoutX="42.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Recent directories">
+         <font>
+            <Font name="Segoe UI Semibold" size="16.0" />
+         </font>
+      </Text>
+      <ListView fx:id="recentDirsList" layoutX="50.0" layoutY="213.0" prefHeight="74.0" prefWidth="272.0" style="-fx-background-color: #fff;" />
+      <Button fx:id="continueBtn" alignment="CENTER" contentDisplay="RIGHT" layoutX="192.0" layoutY="314.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="122.0" style="-fx-background-color: #007fff; -fx-border-radius: 8;" text="Continue" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Semibold" size="15.0" />
+         </font>
+         <graphic>
+            <ImageView fitHeight="18.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true" translateX="5.0">
+               <Image url="@../images/right.png" />
+            </ImageView>
+         </graphic>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Text fx:id="noRecentDirsLabel" fill="#888888" layoutX="42.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No previous directories found">
+         <font>
+            <Font name="Segoe UI Italic" size="14.0" />
+         </font>
+      </Text>
+   </Pane>
+</AnchorPane>
