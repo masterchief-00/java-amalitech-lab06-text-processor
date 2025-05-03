@@ -10,10 +10,11 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("x.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com/kwizera/javaamalitechlab06textprocessor/views/landing-page.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("TXT Processor");
+        stage.setResizable(false);
         stage.show();
     }
 
