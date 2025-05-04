@@ -24,6 +24,7 @@ public class InMemoryTextFileRepository implements TextFileRepository {
         return Optional.ofNullable(store.get(fileName));
     }
 
+    // checks if a file is valid before adding it to a collection
     @Override
     public void save(Path path) throws IOException {
         if (Files.isRegularFile(path)) {

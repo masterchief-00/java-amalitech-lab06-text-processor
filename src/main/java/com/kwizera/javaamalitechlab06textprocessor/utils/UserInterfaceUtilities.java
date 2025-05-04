@@ -9,6 +9,8 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Optional;
 
+
+// utility class containing dialog boxes for errors, confirmations and warnings
 public class UserInterfaceUtilities {
     InputValidationUtilities inputValidationUtilities = new InputValidationUtilities();
 

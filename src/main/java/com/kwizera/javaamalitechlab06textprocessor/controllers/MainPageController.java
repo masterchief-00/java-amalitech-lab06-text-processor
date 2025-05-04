@@ -96,6 +96,7 @@ public class MainPageController {
     @FXML
     public TextFlow textReader;
 
+    // implements the functionality to replace file contents using a regex
     @FXML
     public void onReplaceClicked() {
         if (!replaceInput.getText().isEmpty()) {
@@ -112,6 +113,7 @@ public class MainPageController {
         }
     }
 
+    // implements functionality to allow searching by regex pattern
     @FXML
     public void onRegexSearchClicked() {
         try {
@@ -144,6 +146,7 @@ public class MainPageController {
         }
     }
 
+    // implements functionality to save new changes to the selected file
     @FXML
     public void onSaveClicked() {
         if (textWriter.isVisible()) {
@@ -153,8 +156,14 @@ public class MainPageController {
         }
     }
 
+    // implements functionality to save new changes to a new file
     @FXML
     public void onSaveAsClicked() {
+        if (!textWriter.isVisible()) {
+            UIUtilities.displayError("No changes to save");
+            return;
+        }
+
         Optional<String> fileName = UIUtilities.fileNamingDialogBox();
 
         if (fileName.isPresent()) {
@@ -179,6 +188,7 @@ public class MainPageController {
         }
     }
 
+    // navigates back to landing page to select a new directory
     @FXML
     public void onChangeDirectory() {
         try {
@@ -189,6 +199,7 @@ public class MainPageController {
         }
     }
 
+    // refreshes the UI to sync with the memory
     @FXML
     public void onReloadClicked() {
         try {
@@ -203,6 +214,7 @@ public class MainPageController {
 
     }
 
+    // implements functionality to delete files
     @FXML
     public void onDeleteFileClicked() {
         boolean choice = UIUtilities.displayWarning("This action is irreversible. Sure?", "Delete " + fileNameSelected);
@@ -221,6 +233,7 @@ public class MainPageController {
         }
     }
 
+    // implements functionality to create a new file
     @FXML
     public void onNewFileClicked() {
         Optional<String> fileName = UIUtilities.fileNamingDialogBox();
@@ -240,6 +253,7 @@ public class MainPageController {
         }
     }
 
+
     @FXML
     private void initialize() {
         try {
@@ -253,6 +267,7 @@ public class MainPageController {
         }
     }
 
+    // attaches listeners to UI controls
     private void addListeners() {
         dirFilesList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
@@ -269,6 +284,7 @@ public class MainPageController {
         CustomLogger.log(CustomLogger.LogLevel.INFO, "Attached listeners to files list and text flow");
     }
 
+    // Initializes the session variable, services reference and refreshes the files list
     private void initializeData() throws InvalidActiveDirectoryException, IOException {
         session = SessionManager.getInstance();
         textProcessor = session.getServices();
@@ -277,6 +293,7 @@ public class MainPageController {
         CustomLogger.log(CustomLogger.LogLevel.INFO, "Initialized data on the main page");
     }
 
+    // retrieves files from the active directory. useful in refreshing UI
     private void syncFileList() throws IOException {
         textProcessor.syncFiles(activeDirectory);
         allFiles = textProcessor.getFilesInDirectory();
@@ -291,6 +308,7 @@ public class MainPageController {
         }
     }
 
+    // loads the contents of the selected file to the text flow component
     private void loadFileContents(String fileName, Boolean isLoadingIntoTextArea) {
         try {
             if (isLoadingIntoTextArea) {
@@ -333,6 +351,7 @@ public class MainPageController {
         }
     }
 
+    // disables the text flow, enables the text area to allow the user to make changes
     private void switchToEditMode() {
         textReader.setVisible(false);
         textWriter.setVisible(true);
@@ -344,6 +363,7 @@ public class MainPageController {
         });
     }
 
+    // does the opposite of switchToEditMode()
     private void switchToReadMode() {
         textReader.setVisible(true);
         textWriter.setVisible(false);
@@ -351,8 +371,10 @@ public class MainPageController {
         loadFileContents(fileNameSelected, true);
     }
 
+    // saves edited changes to the active file
     private void saveChanges() {
         try {
+            // creates lines by splitting by special line ending characters like \n
             List<String> lines = List.of(textWriter.getText().split("\\R"));
             textProcessor.saveToFile(fileNameSelected, lines);
             UIUtilities.displayConfirmation("File edited, new changes saved successfully");
@@ -365,15 +387,18 @@ public class MainPageController {
         }
     }
 
+    // instructs the list view component to select a specific file
     private void defaultSelect(String fileName) {
         loadFileContents(fileName, false);
         dirFilesList.getSelectionModel().select(fileName);
     }
 
+    // instructs the list view component to select the first item
     private void defaultSelect() {
         dirFilesList.getSelectionModel().selectFirst();
     }
 
+    // applies highlights to the matched words
     private void applyHighlighting(List<LineMatchResult> searchResults) {
         textReader.getChildren().clear();
         for (LineMatchResult result : searchResults) {
@@ -402,6 +427,7 @@ public class MainPageController {
         }
     }
 
+    // performs a directory wide search
     private void directorySearch() {
         try {
             List<FileSearchResult> fileSearchResults = textProcessor.massiveSearch(regexInput.getText());
