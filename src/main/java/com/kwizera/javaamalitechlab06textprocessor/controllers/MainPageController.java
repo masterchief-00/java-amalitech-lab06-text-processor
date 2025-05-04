@@ -253,7 +253,6 @@ public class MainPageController {
         }
     }
 
-
     @FXML
     private void initialize() {
         try {
@@ -324,7 +323,7 @@ public class MainPageController {
                 lines.forEach(line -> {
                     Text textNode = new Text(line + "\n");
                     if (isLoadingIntoTextArea) {
-                        textWriter.setText(line + "\n");
+                        textWriter.appendText(line + "\n");
 
                     } else {
                         textReader.getChildren().add(textNode);
@@ -338,7 +337,7 @@ public class MainPageController {
                         Text textnode = new Text(line + "\n");
 
                         if (isLoadingIntoTextArea) {
-                            textWriter.setText(line + "\n");
+                            textWriter.appendText(line + "\n");
                         } else {
                             textReader.getChildren().add(textnode);
                         }

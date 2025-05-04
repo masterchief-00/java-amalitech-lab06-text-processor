@@ -63,6 +63,11 @@ Two types of searching have been implemented in this program
 - They are displayed right after the regex search has found matching words in a file,
 - This is where a user can type the replacing word(s).
 
+## Video demonstration
+
+- [Click here for the video](https://drive.google.com/file/d/1mxW0bDHoNmdh7H_-L4_peKEzHKXP9Yiq/view?usp=sharing)
+
+
 ## Future improvements and enhancements
 
 - With more time, tests can also be added.
