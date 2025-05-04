@@ -1,16 +1,45 @@
 package com.kwizera.javaamalitechlab06textprocessor.Sessions;
 
+import com.kwizera.javaamalitechlab06textprocessor.Exceptions.InvalidActiveDirectoryException;
+import com.kwizera.javaamalitechlab06textprocessor.repositories.InMemoryTextFileRepository;
+import com.kwizera.javaamalitechlab06textprocessor.repositories.TextFileRepository;
+import com.kwizera.javaamalitechlab06textprocessor.services.DataManager;
+import com.kwizera.javaamalitechlab06textprocessor.services.TextProcessor;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class SessionManager {
-    private static Path activeDirectory;
+    private static SessionManager instance = new SessionManager();
 
-    public static Path getActiveDirectory() {
+    private static Path activeDirectory;
+    private final TextFileRepository textFileRepository;
+    private final TextProcessor textProcessor;
+
+    private SessionManager() {
+        this.textFileRepository = new InMemoryTextFileRepository();
+        this.textProcessor = new DataManager(textFileRepository);
+    }
+
+
+    public static SessionManager getInstance() {
+        if (instance == null) {
+            instance = new SessionManager();
+        }
+        return instance;
+    }
+
+    public TextProcessor getServices() {
+        return textProcessor;
+    }
+
+    public Path getActiveDirectory() throws InvalidActiveDirectoryException {
+        if (activeDirectory == null)
+            throw new InvalidActiveDirectoryException("Invalid directory selected, please pick a different directory!");
         return activeDirectory;
     }
 
-    public static void setActiveDirectory(Path path) {
+    public void setActiveDirectory(Path path) {
         if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException("Not a directory: " + path);
         }
