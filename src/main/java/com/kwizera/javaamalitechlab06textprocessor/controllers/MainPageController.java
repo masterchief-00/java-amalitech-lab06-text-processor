@@ -17,10 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -45,6 +42,19 @@ public class MainPageController {
     List<TextFile> allFiles = new ArrayList<>();
 
     private String fileNameSelected;
+    private String currentRegex;
+
+    @FXML
+    public HBox searchDeleteBox;
+    @FXML
+
+    public HBox replaceBox;
+    @FXML
+
+    public TextField replaceInput;
+    @FXML
+
+    public Button replaceBtn;
 
     @FXML
     public VBox fileSearchResultsBox;
@@ -86,15 +96,35 @@ public class MainPageController {
     public TextFlow textReader;
 
     @FXML
+    public void onReplaceClicked() {
+        if (!replaceInput.getText().isEmpty()) {
+            try {
+                int replacedCount = textProcessor.replaceInFile(currentRegex, replaceInput.getText(), fileNameSelected);
+                UIUtilities.displayConfirmation(replacedCount + " changes applied");
+                loadFileContents(fileNameSelected, false);
+                replaceBox.setVisible(false);
+                searchDeleteBox.setVisible(true);
+            } catch (IOException e) {
+                UIUtilities.displayError("ERROR: Unable to perform replace operation");
+            }
+        }
+    }
+
+    @FXML
     public void onRegexSearchClicked() {
         try {
-            List<LineMatchResult> matchResults = textProcessor.search(regexInput.getText(), fileNameSelected);
+            currentRegex = regexInput.getText();
+            List<LineMatchResult> matchResults = textProcessor.search(currentRegex, fileNameSelected);
             int matchCount = 0;
             if (!matchResults.isEmpty()) {
                 matchCount = matchResults.stream().mapToInt(result -> result.getMatches().size()).sum();
                 applyHighlighting(matchResults);
 
                 UIUtilities.displayConfirmation("Search complete, " + matchCount + " results found");
+                if (matchCount > 0) {
+                    searchDeleteBox.setVisible(false);
+                    replaceBox.setVisible(true);
+                }
 
             } else {
                 boolean choice = UIUtilities.displayWarning("No results found, would you like a directory wide search?", "Directory search");
@@ -157,6 +187,8 @@ public class MainPageController {
         try {
             syncFileList();
             defaultSelect();
+            searchDeleteBox.setVisible(true);
+            replaceBox.setVisible(false);
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: Unable to reload files");
         }

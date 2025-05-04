@@ -122,6 +122,7 @@ public class DataManager implements TextProcessor {
                 }
 
             });
+            writer.close();
 
             Files.move(tempFile, textFile.get().getPath(), StandardCopyOption.REPLACE_EXISTING);
         }
@@ -189,9 +190,7 @@ public class DataManager implements TextProcessor {
                 spans.add(new MatchSpan(matcher.start(), matcher.end()));
             }
 
-            if (!spans.isEmpty()) {
-                matches.add(new LineMatchResult(lineNumber[0], line, spans));
-            }
+            matches.add(new LineMatchResult(lineNumber[0], line, spans));
 
             lineNumber[0]++;
         });
