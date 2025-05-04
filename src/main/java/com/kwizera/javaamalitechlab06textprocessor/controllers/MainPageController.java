@@ -2,18 +2,26 @@ package com.kwizera.javaamalitechlab06textprocessor.controllers;
 
 import com.kwizera.javaamalitechlab06textprocessor.Exceptions.InvalidActiveDirectoryException;
 import com.kwizera.javaamalitechlab06textprocessor.Sessions.SessionManager;
+import com.kwizera.javaamalitechlab06textprocessor.models.FileSearchResult;
+import com.kwizera.javaamalitechlab06textprocessor.models.LineMatchResult;
+import com.kwizera.javaamalitechlab06textprocessor.models.MatchSpan;
 import com.kwizera.javaamalitechlab06textprocessor.models.TextFile;
 import com.kwizera.javaamalitechlab06textprocessor.services.DataManager;
 import com.kwizera.javaamalitechlab06textprocessor.services.TextProcessor;
+import com.kwizera.javaamalitechlab06textprocessor.utils.InputValidationUtilities;
 import com.kwizera.javaamalitechlab06textprocessor.utils.MainUtilities;
 import com.kwizera.javaamalitechlab06textprocessor.utils.UserInterfaceUtilities;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -23,6 +31,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
 public class MainPageController {
@@ -30,11 +39,15 @@ public class MainPageController {
     SessionManager session;
     private final UserInterfaceUtilities UIUtilities = new UserInterfaceUtilities();
     private final MainUtilities mainUtilities = new MainUtilities();
+    private final InputValidationUtilities inputValidationUtilities = new InputValidationUtilities();
     private TextProcessor textProcessor;
     private Path activeDirectory;
     List<TextFile> allFiles = new ArrayList<>();
 
     private String fileNameSelected;
+
+    @FXML
+    public VBox fileSearchResultsBox;
 
     @FXML
     public TextArea textWriter;
@@ -71,6 +84,31 @@ public class MainPageController {
 
     @FXML
     public TextFlow textReader;
+
+    @FXML
+    public void onRegexSearchClicked() {
+        try {
+            List<LineMatchResult> matchResults = textProcessor.search(regexInput.getText(), fileNameSelected);
+            int matchCount = 0;
+            if (!matchResults.isEmpty()) {
+                matchCount = matchResults.stream().mapToInt(result -> result.getMatches().size()).sum();
+                applyHighlighting(matchResults);
+
+                UIUtilities.displayConfirmation("Search complete, " + matchCount + " results found");
+
+            } else {
+                boolean choice = UIUtilities.displayWarning("No results found, would you like a directory wide search?", "Directory search");
+                if (choice) {
+                    directorySearch();
+                }
+            }
+
+        } catch (IOException e) {
+            UIUtilities.displayError("Unable to search for the entered pattern");
+        } catch (PatternSyntaxException e) {
+            UIUtilities.displayError("ERROR: Invalid regex syntax");
+        }
+    }
 
     @FXML
     public void onSaveClicked() {
@@ -263,6 +301,7 @@ public class MainPageController {
     private void switchToReadMode() {
         textReader.setVisible(true);
         textWriter.setVisible(false);
+        fileSearchResultsBox.setVisible(false);
         loadFileContents(fileNameSelected, true);
     }
 
@@ -286,5 +325,114 @@ public class MainPageController {
 
     private void defaultSelect() {
         dirFilesList.getSelectionModel().selectFirst();
+    }
+
+    private void applyHighlighting(List<LineMatchResult> searchResults) {
+        textReader.getChildren().clear();
+        for (LineMatchResult result : searchResults) {
+            int lastIndex = 0;
+            String line = result.getLineText();
+
+            for (MatchSpan span : result.getMatches()) {
+                if (lastIndex < span.getStart()) {
+                    String plainText = line.substring(lastIndex, span.getStart());
+                    textReader.getChildren().add(new Text(plainText));
+                }
+
+                String matchedText = line.substring(span.getStart(), span.getEnd());
+                Label highlighted = new Label(matchedText);
+                highlighted.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-background-color: yellow;");
+                textReader.getChildren().add(highlighted);
+
+                lastIndex = span.getEnd();
+            }
+
+            if (lastIndex < line.length()) {
+                textReader.getChildren().add(new Text(line.substring(lastIndex)));
+            }
+
+            textReader.getChildren().add(new Text("\n"));
+        }
+    }
+
+    private void directorySearch() {
+        try {
+            List<FileSearchResult> fileSearchResults = textProcessor.massiveSearch(regexInput.getText());
+            int matchCount = 0;
+
+            if (!fileSearchResults.isEmpty()) {
+                textReader.setVisible(false);
+                textWriter.setVisible(false);
+                fileSearchResultsBox.setVisible(true);
+                fileSearchResultsBox.prefWidthProperty().bind(editorContainer.widthProperty());
+                fileSearchResultsBox.setMaxWidth(Double.MAX_VALUE);
+                fileSearchResultsBox.setSpacing(10);
+                fileSearchResultsBox.getChildren().clear();
+
+                for (FileSearchResult result : fileSearchResults) {
+                    VBox resultsItem = getSingleFileSearchResultBox(result);
+                    Label fileNameLabel = new Label("📄 " + result.getFilePath().getFileName().toString());
+                    fileNameLabel.setWrapText(true);
+                    fileNameLabel.setFont(Font.font("Segoe UI Emoji", 14));
+                    fileNameLabel.setStyle("-fx-font-weight:bold; -fx-font-size:14px; -fx-text-fill: #45b3e0;");
+                    resultsItem.getChildren().add(fileNameLabel);
+
+                    for (LineMatchResult line : result.getMatchedLines()) {
+                        String lineInfo = "Line " + line.getLineNumber() + " | " + line.getLineText();
+                        Label lineText = new Label(lineInfo);
+                        lineText.setStyle("-fx-text-fill:#4c4c4c");
+                        lineText.setFont(Font.font("Segoe UI Emoji", 12));
+                        lineText.setWrapText(true);
+                        resultsItem.getChildren().add(lineText);
+                        matchCount++;
+                    }
+                    fileSearchResultsBox.getChildren().add(resultsItem);
+                    resultsItem.prefWidthProperty().bind(fileSearchResultsBox.widthProperty());
+
+                }
+
+                UIUtilities.displayConfirmation("Search complete, " + matchCount + " results found from " + fileSearchResults.size() + " files.");
+
+            } else {
+                UIUtilities.displayConfirmation("Search complete, no results found.");
+
+            }
+        } catch (Exception e) {
+            UIUtilities.displayError("ERROR: Unable to perform the search");
+        }
+    }
+
+    private VBox getSingleFileSearchResultBox(FileSearchResult result) {
+        String normalStyle = """
+                -fx-background-color: #f8f8ff;
+                -fx-border-color: #45b3e0;
+                -fx-border-width: 1;
+                -fx-border-radius:4;
+                """;
+        String hoverStyle = """
+                -fx-background-color: #f5ffff;
+                -fx-border-color: #007fff;
+                -fx-border-width: 1.2;
+                -fx-border-radius:6;
+                """;
+
+        VBox resultsItem = new VBox();
+        resultsItem.setMaxWidth(Double.MAX_VALUE);
+        resultsItem.setSpacing(3);
+        resultsItem.setPrefWidth(100);
+        resultsItem.setPadding(new Insets(10, 10, 10, 10));
+        resultsItem.setStyle(normalStyle);
+        resultsItem.setCursor(Cursor.HAND);
+
+        resultsItem.setOnMouseEntered(e -> resultsItem.setStyle(hoverStyle));
+        resultsItem.setOnMouseExited(e -> resultsItem.setStyle(normalStyle));
+        resultsItem.setOnMouseClicked(e -> {
+            defaultSelect(result.getFilePath().getFileName().toString());
+            loadFileContents(result.getFilePath().getFileName().toString(), false);
+            fileSearchResultsBox.setVisible(false);
+            textWriter.setVisible(false);
+            textReader.setVisible(true);
+        });
+        return resultsItem;
     }
 }

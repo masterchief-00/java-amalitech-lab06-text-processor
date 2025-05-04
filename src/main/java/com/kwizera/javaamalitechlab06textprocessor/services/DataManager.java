@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
 public class DataManager implements TextProcessor {
@@ -41,10 +42,9 @@ public class DataManager implements TextProcessor {
     }
 
     @Override
-    public List<LineMatchResult> search(String regex, String fileName) throws IOException {
-        Pattern pattern = Pattern.compile(regex); // invalid regex exception. custom one?
+    public List<LineMatchResult> search(String regex, String fileName) throws IOException, PatternSyntaxException {
+        Pattern pattern = Pattern.compile(regex);
         List<LineMatchResult> results = new ArrayList<>();
-
 
         Optional<TextFile> file = textFileRepository.findByName(fileName);
 
@@ -56,14 +56,32 @@ public class DataManager implements TextProcessor {
     }
 
     @Override
-    public List<FileSearchResult> massiveSearch(String regex) throws IOException {
+    public List<FileSearchResult> massiveSearch(String regex) throws IOException, PatternSyntaxException {
         Pattern pattern = Pattern.compile(regex);
         List<FileSearchResult> results = new ArrayList<>();
         List<TextFile> filesInThisDirectory = textFileRepository.findAll();
 
         filesInThisDirectory.forEach(textFile -> {
             try {
-                List<LineMatchResult> matches = getLineMatchResults(textFile, pattern);
+                Stream<String> lines = textFile.getContentFileContentStream();
+                List<LineMatchResult> matches = new ArrayList<>();
+                final int[] lineNumber = {0};
+
+                lines.forEach(line -> {
+                    Matcher matcher = pattern.matcher(line);
+                    List<MatchSpan> spans = new ArrayList<>();
+
+                    while (matcher.find()) {
+                        spans.add(new MatchSpan(matcher.start(), matcher.end()));
+                    }
+
+                    if (!spans.isEmpty()) {
+                        matches.add(new LineMatchResult(lineNumber[0], line, spans));
+                    }
+
+                    lineNumber[0]++;
+                });
+
                 if (!matches.isEmpty()) {
                     results.add(new FileSearchResult(textFile.getPath(), matches));
                 }
