@@ -8,6 +8,7 @@ import com.kwizera.javaamalitechlab06textprocessor.models.MatchSpan;
 import com.kwizera.javaamalitechlab06textprocessor.models.TextFile;
 import com.kwizera.javaamalitechlab06textprocessor.services.DataManager;
 import com.kwizera.javaamalitechlab06textprocessor.services.TextProcessor;
+import com.kwizera.javaamalitechlab06textprocessor.utils.CustomLogger;
 import com.kwizera.javaamalitechlab06textprocessor.utils.InputValidationUtilities;
 import com.kwizera.javaamalitechlab06textprocessor.utils.MainUtilities;
 import com.kwizera.javaamalitechlab06textprocessor.utils.UserInterfaceUtilities;
@@ -106,6 +107,7 @@ public class MainPageController {
                 searchDeleteBox.setVisible(true);
             } catch (IOException e) {
                 UIUtilities.displayError("ERROR: Unable to perform replace operation");
+                CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to perform replace operation,  IOException");
             }
         }
     }
@@ -135,8 +137,10 @@ public class MainPageController {
 
         } catch (IOException e) {
             UIUtilities.displayError("Unable to search for the entered pattern");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to search for the entered pattern, IOException");
         } catch (PatternSyntaxException e) {
             UIUtilities.displayError("ERROR: Invalid regex syntax");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to search for the entered pattern, Invalid regex");
         }
     }
 
@@ -167,9 +171,11 @@ public class MainPageController {
                 defaultSelect(newFileName);
             } catch (IOException e) {
                 UIUtilities.displayError("ERROR: File could not be created, check if the file with similar isn't already present");
+                CustomLogger.log(CustomLogger.LogLevel.ERROR, "File could not be created, File already exists or another type of IOException");
             }
         } else {
             UIUtilities.displayError("ERROR: File not created, invalid file name.");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "File not created, invalid file name.");
         }
     }
 
@@ -179,6 +185,7 @@ public class MainPageController {
             mainUtilities.switchScene("/com/kwizera/javaamalitechlab06textprocessor/views/landing-page.fxml", backHomeBtn, "TXT Processor");
         } catch (Exception e) {
             UIUtilities.displayError("Error: Could not load the main page!");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Could not load the main page, IOException");
         }
     }
 
@@ -191,6 +198,7 @@ public class MainPageController {
             replaceBox.setVisible(false);
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: Unable to reload files");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to reload files, IOException");
         }
 
     }
@@ -207,6 +215,7 @@ public class MainPageController {
                 }
             } catch (IOException e) {
                 UIUtilities.displayError("ERROR: File not deleted");
+                CustomLogger.log(CustomLogger.LogLevel.ERROR, "File not deleted, IOException");
             }
 
         }
@@ -227,6 +236,7 @@ public class MainPageController {
             }
         } else {
             UIUtilities.displayError("ERROR: File not created, invalid file name.");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "File not created, invalid file name.");
         }
     }
 
@@ -237,6 +247,7 @@ public class MainPageController {
             addListeners();
         } catch (InvalidActiveDirectoryException e) {
             UIUtilities.displayError("ERROR: " + e.getMessage());
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, e.getMessage());
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: Files in the selected directory could not be loaded, please pick a different directory.");
         }
@@ -254,6 +265,8 @@ public class MainPageController {
         textReader.setOnMouseClicked(e -> switchToEditMode());
 
         defaultSelect();
+
+        CustomLogger.log(CustomLogger.LogLevel.INFO, "Attached listeners to files list and text flow");
     }
 
     private void initializeData() throws InvalidActiveDirectoryException, IOException {
@@ -261,7 +274,7 @@ public class MainPageController {
         textProcessor = session.getServices();
         activeDirectory = session.getActiveDirectory();
         syncFileList();
-
+        CustomLogger.log(CustomLogger.LogLevel.INFO, "Initialized data on the main page");
     }
 
     private void syncFileList() throws IOException {
@@ -316,6 +329,7 @@ public class MainPageController {
             }
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: file contents couldn't be loaded!");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "file contents couldn't be loaded, IOException");
         }
     }
 
@@ -347,6 +361,7 @@ public class MainPageController {
         } catch (IOException e) {
             UIUtilities.displayError("ERROR: Unable to save file");
             switchToReadMode();
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to save file, IOException");
         }
     }
 
@@ -431,6 +446,7 @@ public class MainPageController {
             }
         } catch (Exception e) {
             UIUtilities.displayError("ERROR: Unable to perform the search");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to perform regex search in directory wide search");
         }
     }
 

@@ -2,6 +2,7 @@ package com.kwizera.javaamalitechlab06textprocessor.controllers;
 
 import com.kwizera.javaamalitechlab06textprocessor.Exceptions.InvalidActiveDirectoryException;
 import com.kwizera.javaamalitechlab06textprocessor.Sessions.SessionManager;
+import com.kwizera.javaamalitechlab06textprocessor.utils.CustomLogger;
 import com.kwizera.javaamalitechlab06textprocessor.utils.MainUtilities;
 import com.kwizera.javaamalitechlab06textprocessor.utils.UserInterfaceUtilities;
 import javafx.fxml.FXML;
@@ -26,8 +27,7 @@ public class LandingPageController {
     private final UserInterfaceUtilities UIUtilities = new UserInterfaceUtilities();
     private File selectedDirectory;
     private SessionManager session;
-    private Path recentFile = Paths.get(System.getProperty("user.home"), "recent_dirs.txt");
-    private Path recentDirSelected;
+    private final Path recentFile = Paths.get(System.getProperty("user.home"), "text_processor_recent_dirs.txt");
 
     @FXML
     public Button chooseDirBtn;
@@ -55,8 +55,10 @@ public class LandingPageController {
             Path selectedPath = selectedDirectory.toPath();
             try {
                 session.setActiveDirectory(selectedPath);
+                CustomLogger.log(CustomLogger.LogLevel.INFO, "Setting an active directory");
             } catch (IllegalArgumentException e) {
-                UIUtilities.displayError("Error: " + e.getMessage());
+                UIUtilities.displayError("Error: Unable to set directory");
+                CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to set an active directory");
             }
         }
     }
@@ -67,8 +69,10 @@ public class LandingPageController {
             navigateToMainPage();
         } catch (IOException e) {
             UIUtilities.displayError("Error: Could not load the main page!");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to load the main page, IOException");
         } catch (InvalidActiveDirectoryException e) {
             UIUtilities.displayError("ERROR: " + e.getMessage());
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to load the main page, " + e.getMessage());
         }
     }
 
@@ -85,8 +89,10 @@ public class LandingPageController {
     private List<String> loadRecentDirectories() {
         try {
             if (!Files.exists(recentFile)) return new ArrayList<>();
+            CustomLogger.log(CustomLogger.LogLevel.INFO, "Listing recent directories");
             return Files.readAllLines(recentFile);
         } catch (IOException e) {
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to load recent directories, returning empty list");
             return new ArrayList<>();
         }
     }
@@ -100,9 +106,10 @@ public class LandingPageController {
             if (dirs.size() > 3) dirs = dirs.subList(0, 3);
 
             Files.write(recentFile, dirs);
+            CustomLogger.log(CustomLogger.LogLevel.INFO, "Directory saved to recent directories");
             syncDirList();
         } catch (Exception e) {
-            System.out.println("directory not saved");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Directory not saved to recent directories");
         }
     }
 
@@ -111,9 +118,9 @@ public class LandingPageController {
 
         if (!recentOpenedDirs.isEmpty()) {
             noRecentDirsLabel.setVisible(false);
+            CustomLogger.log(CustomLogger.LogLevel.INFO, "Found recent directories, listing them.");
 
             for (String path : recentOpenedDirs) {
-
                 String normalStyle = """
                             -fx-background-color:  #fff;
                             -fx-border-color:  #d3d3d3;
@@ -151,6 +158,7 @@ public class LandingPageController {
             }
         } else {
             noRecentDirsLabel.setVisible(true);
+            CustomLogger.log(CustomLogger.LogLevel.INFO, "No recent directories found");
         }
     }
 
@@ -161,13 +169,16 @@ public class LandingPageController {
             navigateToMainPage();
         } catch (IOException e) {
             UIUtilities.displayError("Error: Could not load the main page!");
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to load main page, IOException");
         } catch (InvalidActiveDirectoryException e) {
             UIUtilities.displayError("ERROR: " + e.getMessage());
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to load main page, " + e.getMessage());
         }
     }
 
     private void navigateToMainPage() throws InvalidActiveDirectoryException, IOException {
         if (selectedDirectory == null) {
+            CustomLogger.log(CustomLogger.LogLevel.ERROR, "Unable to navigate to main page, Invalid directory selected");
             throw new InvalidActiveDirectoryException("Invalid directory selected, please pick a different directory!");
         } else {
             saveRecentDirectory(selectedDirectory.toString());
