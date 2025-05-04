@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class TextFile {
@@ -85,4 +86,15 @@ public class TextFile {
                 name + " | Size: " + size + " bytes | Modified: " + lastModified;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TextFile textFile = (TextFile) o;
+        return size == textFile.size && lastModified == textFile.lastModified && isDirectory == textFile.isDirectory && Objects.equals(name, textFile.name) && Objects.equals(path, textFile.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, size, lastModified, isDirectory, path);
+    }
 }
