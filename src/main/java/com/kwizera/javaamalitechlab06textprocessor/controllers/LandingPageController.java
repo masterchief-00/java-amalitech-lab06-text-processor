@@ -42,6 +42,7 @@ public class LandingPageController {
     @FXML
     public Text noRecentDirsLabel;
 
+    // allows the user to pick a working directory
     @FXML
     private void handlePickDirectory() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -63,6 +64,7 @@ public class LandingPageController {
         }
     }
 
+    // navigates to the main page if the active directory is set
     @FXML
     private void onContinueClicked() {
         try {
@@ -81,11 +83,13 @@ public class LandingPageController {
         initializeData();
     }
 
+    // sets session instance
     private void initializeData() {
         session = SessionManager.getInstance();
         syncDirList();
     }
 
+    // loads recently opened directories from a file
     private List<String> loadRecentDirectories() {
         try {
             if (!Files.exists(recentFile)) return new ArrayList<>();
@@ -97,6 +101,7 @@ public class LandingPageController {
         }
     }
 
+    // saves the picked directory to the file holding opened directories
     private void saveRecentDirectory(String newDirPath) {
         try {
             List<String> dirs = loadRecentDirectories();
@@ -113,6 +118,7 @@ public class LandingPageController {
         }
     }
 
+    // refreshes the recent directories list
     private void syncDirList() {
         List<String> recentOpenedDirs = loadRecentDirectories();
 

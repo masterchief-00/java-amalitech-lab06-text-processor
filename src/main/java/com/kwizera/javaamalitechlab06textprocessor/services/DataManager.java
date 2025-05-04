@@ -55,6 +55,7 @@ public class DataManager implements TextProcessor {
         return results;
     }
 
+    // Iterates over all files in the collection, reads their contents matching with the given regex pattern
     @Override
     public List<FileSearchResult> massiveSearch(String regex) throws IOException, PatternSyntaxException {
         Pattern pattern = Pattern.compile(regex);
@@ -99,6 +100,7 @@ public class DataManager implements TextProcessor {
         int[] totalReplacements = {0};
         Optional<TextFile> textFile = textFileRepository.findByName(fileName);
 
+        // uses a temporary file to avoid data loss in case of failure, first write to a tmp file then move the contents to the real file
         if (textFile.isPresent()) {
             Path tempFile = Files.createTempFile("EDITING_TMP-", ".tmp");
             Stream<String> lines = textFile.get().getContentFileContentStream();
@@ -177,6 +179,7 @@ public class DataManager implements TextProcessor {
         return textFileRepository.findAll();
     }
 
+    // a utility method to find matching words in a given text file
     private List<LineMatchResult> getLineMatchResults(TextFile textFile, Pattern pattern) throws IOException {
         Stream<String> lines = textFile.getContentFileContentStream();
         List<LineMatchResult> matches = new ArrayList<>();

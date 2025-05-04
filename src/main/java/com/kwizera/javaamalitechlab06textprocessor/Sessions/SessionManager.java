@@ -9,6 +9,7 @@ import com.kwizera.javaamalitechlab06textprocessor.services.TextProcessor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+// singleton class managing the session and the whole application context, holds references to the services and repository interfaces
 public class SessionManager {
     private static SessionManager instance = new SessionManager();
 
